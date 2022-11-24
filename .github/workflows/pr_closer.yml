@@ -13,7 +13,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const pulls = github.pulls.get({
+            const pulls = github.rest.pulls.get({
               pull_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
