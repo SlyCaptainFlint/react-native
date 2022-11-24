@@ -9,9 +9,16 @@
 
 'use strict';
 
-const {danger, fail, /*message,*/ warn} = require('danger');
+const {danger, fail, message, warn} = require('danger');
 const includes = require('lodash.includes');
 const eslint = require('@seadub/danger-plugin-eslint');
+
+const prIsMerged = danger.github.pr.merged_at;
+
+if(prIsMerged){
+    message(`${danger.github.pr}`);
+}
+
 
 const isFromPhabricator =
   danger.github.pr.body &&
