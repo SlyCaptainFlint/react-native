@@ -1,0 +1,39 @@
+name: Close PR, leave comment
+on:
+  pull_request
+  
+env:
+    GITHUB_CONTEXT: ${{ toJson(github) }}
+
+jobs:
+  comment-and-label:
+    runs-on: ubuntu-latest
+    if: "${{ github.event.pull_request.closed_at }}"
+    steps:
+      - uses: actions/github-script@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const pulls = github.pulls.get({
+              pull_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            })
+            
+            echo "$GITHUB_CONTEXT"
+            echo pulls
+            
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `This pull request was successfully merged by #{commit_author} in **#{commit.sha}**.\n\n<sup>[When will my fix make it into a release?](https://github.com/facebook/react-native/wiki/Release-FAQ#when-will-my-fix-make-it-into-a-release) | [Upcoming Releases](https://github.com/reactwg/react-native-releases/discussions/categories/releases)</sup>"
+            `})
+            github.issues.addLabels({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: ["Merged"]
+            })
+          }            
+  
