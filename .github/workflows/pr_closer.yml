@@ -21,4 +21,3 @@ jobs:
             })
             
             console.log(pulls)
-            console.log($GITHUB_CONTEXT)
