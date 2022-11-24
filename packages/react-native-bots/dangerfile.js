@@ -14,7 +14,7 @@ const includes = require('lodash.includes');
 const eslint = require('@seadub/danger-plugin-eslint');
 
 const prIsMerged = danger.github.pr.merged_at;
-
+message(`${prIsMerged}  ${danger.github.pr}`);
 if(prIsMerged){
     message(`${danger.github.pr}`);
 }
