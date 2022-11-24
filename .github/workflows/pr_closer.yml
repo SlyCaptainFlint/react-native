@@ -6,11 +6,8 @@ on: pull_request
 jobs:
   comment-and-label:
     runs-on: ubuntu-latest
-    #if: ${{ github.event.pull_request.closed_at }}
     steps:
       - uses: actions/github-script@v6
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
