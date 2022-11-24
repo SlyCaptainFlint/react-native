@@ -710,33 +710,18 @@ jobs:
       - checkout
       - setup_artifacts
       - run_yarn
-
-      # Starting emulator in advance as it takes some time to boot.
-      - run:
-          name: Create Android Virtual Device
-          command: source scripts/android-setup.sh && createAVD
-      - run:
-          name: Launch Android Virtual Device in Background
-          command: source scripts/android-setup.sh && launchAVD
-          background: true
-
       - download_gradle_dependencies
 
       - run:
           name: Build & Test React Native using Gradle
           command: ./gradlew buildAll
 
-      - run:
-          name: Build RN Tester for Release using Gradle
-          command: ./gradlew packages:rn-tester:android:app:assembleRelease
-
-      # Wait for AVD to finish booting before running tests
-      - run:
-          name: Wait for Android Virtual Device
-          command: source scripts/android-setup.sh && waitForAVD
-
       - report_bundle_size:
           platform: android
+
+      - store_artifacts:
+          path: ~/react-native/packages/rn-tester/android/app/build/outputs/apk/
+          destination: rntester-apk
 
       # Optionally, run disabled tests
       - when:
@@ -780,9 +765,7 @@ jobs:
             REPO_ROOT=$(pwd)
             node ./scripts/set-rn-template-version.js "file:$REPO_ROOT/build/$(cat build/react-native-package-version)"
             node cli.js init $PROJECT_NAME --directory "/tmp/$PROJECT_NAME" --template $REPO_ROOT --verbose --skip-install
-            cd /tmp/$PROJECT_NAME
-            yarn
-
+            node ./scripts/template/install-dependencies.js --reactNativeRootPath $REPO_ROOT --templatePath "/tmp/$PROJECT_NAME"
       - run:
           name: Build the template application for << parameters.flavor >> with Architecture set to << parameters.architecture >>, and using the << parameters.jsengine>> JS engine.
           command: |
@@ -798,6 +781,10 @@ jobs:
               export ORG_GRADLE_PROJECT_hermesEnabled=false
             fi
             ./gradlew assemble<< parameters.flavor >> -PREACT_NATIVE_MAVEN_LOCAL_REPO=/root/react-native/maven-local
+
+      - store_artifacts:
+          path: /tmp/$PROJECT_NAME/android/app/build/outputs/apk/
+          destination: template-apk
 
   # -------------------------
   #    JOBS: Test iOS Template
@@ -863,12 +850,11 @@ jobs:
             PATH_TO_PACKAGE="$REPO_ROOT/build/$PACKAGE"
             node ./scripts/set-rn-template-version.js "file:$PATH_TO_PACKAGE"
             node cli.js init $PROJECT_NAME --directory "/tmp/$PROJECT_NAME" --template $REPO_ROOT --verbose --skip-install
+            node ./scripts/template/install-dependencies.js --reactNativeRootPath $REPO_ROOT --templatePath "/tmp/$PROJECT_NAME"
       - run:
           name: Install iOS dependencies - Configuration << parameters.flavor >>; New Architecture << parameters.architecture >>; JS Engine << parameters.jsengine>>; Flipper << parameters.flipper >>
           command: |
-            cd /tmp/$PROJECT_NAME
-            yarn install
-            cd ios
+            cd /tmp/$PROJECT_NAME/ios
 
             bundle install
 
