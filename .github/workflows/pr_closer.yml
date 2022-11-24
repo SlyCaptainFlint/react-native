@@ -1,8 +1,7 @@
 name: Close PR, leave comment
 on: pull_request
   
-env:
-    GITHUB_CONTEXT: ${{ toJson(github) }}
+
 
 jobs:
   comment-and-label:
@@ -10,6 +9,8 @@ jobs:
     #if: ${{ github.event.pull_request.closed_at }}
     steps:
       - uses: actions/github-script@v6
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
