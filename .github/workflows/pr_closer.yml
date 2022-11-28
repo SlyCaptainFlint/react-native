@@ -19,8 +19,6 @@ jobs:
                 repo: context.repo.repo,
               })).data;
               
-              console.log(sha)
-              
               const getClosedPrIfExists= (commit) => {
               console.log(commit);
                 if(!commit || !commit.message) return;
@@ -35,28 +33,24 @@ jobs:
               };
               
               const closedPrNumber = getClosedPrIfExists(commit);
-              
-              console.log(closedPrNumber);
-              
               if(closedPrNumber){
                 const commitAuthor = commit.author.name;
-                console.log(commitAuthor);
-                console.log(commit.author.login);
-                
-                //need to check if the PR has already been tagged
                 
                 const pr = await github.rest.pulls.get({
                   pull_number: closedPrNumber,
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                 })
+                
+                // If the PR has already been processed (labeled as Merged), skip it
+                if(pr.labels.some(label => label.name === "Merged")) return;
 
                 github.rest.issues.createComment({
                   issue_number: closedPrNumber,
                   owner: context.repo.owner,
                   repo: context.repo.repo,
-                  body: `This pull request was successfully merged by ${commitAuthor} in **${sha}**.\n\n<sup>[When will my fix make it into a release?](https://github.com/facebook/react-native/wiki/Release-FAQ#when-will-my-fix-make-it-into-a-release) | [Upcoming Releases](https://github.com/reactwg/react-native-releases/discussions/categories/releases)</sup>"
-                `})
+                  body: `This pull request was successfully merged by ${commitAuthor} in **${sha}**.\n\n<sup>[When will my fix make it into a release?](https://github.com/facebook/react-native/wiki/Release-FAQ#when-will-my-fix-make-it-into-a-release) | [Upcoming Releases](https://github.com/reactwg/react-native-releases/discussions/categories/releases)</sup>`
+                })
 
                 github.rest.issues.addLabels({
                   issue_number: closedPrNumber,
