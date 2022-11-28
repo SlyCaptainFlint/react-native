@@ -30,8 +30,8 @@ jobs:
                 const prClosingMatch = commit.message.match(prClosingRegex);
                 
                 console.log(prClosingMatch);
-                if(!prClosingMatch || !prClosingMatch[0]) return;
-                return prClosingMatch[0];
+                if(!prClosingMatch || (!prClosingMatch[1] && ! prClosingMatch[2])) return;
+                return prClosingMatch[1] ?? prClosingMatch[2];
               };
               
               const closedPrNumber = getClosedPrIfExists(commit);
