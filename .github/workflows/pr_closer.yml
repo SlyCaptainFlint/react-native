@@ -19,17 +19,24 @@ jobs:
                 repo: context.repo.repo,
               });
               
+              console.log(sha)
+              
               const getClosedPrIfExists= (commit) => {
+                console.log(commit.message);
                 if(!commit || !commit.message) return;
               
                 const prClosingRegex = /Closes https:\/\/github.com\/facebook\/react-native\/pull\/([0-9]+)|Pull Request resolved: https:\/\/github.com\/facebook\/react-native\/pull\/([0-9]+)/;
                 
                 const prClosingMatch = commit.message.match(prClosingRegex);
+                
+                console.log(prClosingMatch);
                 if(!prClosingMatch || !prClosingMatch[0]) return;
                 return prClosingMatch[0];
               };
               
               const closedPrNumber = getClosedPrIfExists(commit);
+              
+              console.log(closedPrNumber);
               
               if(closedPrNumber){
                 const commitAuthor = commit.author.name;
