@@ -18,4 +18,5 @@ jobs:
               repo: context.repo.repo,
             });
             
-            console.log(commit);
+            console.log(`sha: ${sha}`);
+            console.log(`full commit: ${commit}`);
