@@ -19,11 +19,19 @@ jobs:
                 repo: context.repo.repo,
               });
               
-              const prClosingRegex = /Closes https:\/\/github.com\/facebook\/react-native\/pull\/([0-9]+)|Pull Request resolved: https:\/\/github.com\/facebook\/react-native\/pull\/([0-9]+)/;
-              const prClosingMatch = commit.message.match(prClosingRegex);
+              const getClosedPrIfExists= (commit) => {
+                if(!commit || !commit.message) return;
               
-              if(prClosingMatch){
-                const prNumber = prClosingMatch[1];
+                const prClosingRegex = /Closes https:\/\/github.com\/facebook\/react-native\/pull\/([0-9]+)|Pull Request resolved: https:\/\/github.com\/facebook\/react-native\/pull\/([0-9]+)/;
+                
+                const prClosingMatch = commit.message.match(prClosingRegex);
+                if(!prClosingMatch || !prClosingMatch[0]) return;
+                return prClosingMatch[0];
+              };
+              
+              const closedPrNumber = getClosedPrIfExists(commit);
+              
+              if(closedPrNumber){
                 const commitAuthor = commit.author.name;
                 console.log(commitAuthor);
                 console.log(commit.author.login);
@@ -31,13 +39,13 @@ jobs:
                 //need to check if the PR has already been tagged
                 
                 const pr = await github.rest.pulls.get({
-                  pull_number: prNumber,
+                  pull_number: closedPrNumber,
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                 })
 
                 github.rest.issues.createComment({
-                  issue_number: prNumber,
+                  issue_number: closedPrNumber,
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   body: `This pull request was successfully merged by ${commitAuthor} in **${sha}**.\n\n<sup>[When will my fix make it into a release?](https://github.com/facebook/react-native/wiki/Release-FAQ#when-will-my-fix-make-it-into-a-release) | [Upcoming Releases](https://github.com/reactwg/react-native-releases/discussions/categories/releases)</sup>"
