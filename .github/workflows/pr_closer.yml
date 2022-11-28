@@ -10,8 +10,8 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            if(context.commits && context.commits.length){
-              const sha = context.commits[0].id;
+            if(context.payload.commits && context.payload.commits.length){
+              const sha = context.payload.commits[0].id;
 
               const commit = await github.rest.git.getCommit({
                 commit_sha: sha,
