@@ -22,7 +22,9 @@ jobs:
               console.log(sha)
               
               const getClosedPrIfExists= (commit) => {
-                console.log(commit.message);
+                console.log(commit);
+                console.log(context.repo.owner);
+                console.log(context.repo.repo);
                 if(!commit || !commit.message) return;
               
                 const prClosingRegex = /Closes https:\/\/github.com\/facebook\/react-native\/pull\/([0-9]+)|Pull Request resolved: https:\/\/github.com\/facebook\/react-native\/pull\/([0-9]+)/;
