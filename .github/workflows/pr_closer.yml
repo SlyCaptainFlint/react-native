@@ -13,11 +13,11 @@ jobs:
             if(context.payload.commits && context.payload.commits.length){
               const sha = context.payload.commits[0].id;
 
-              const commit = await github.rest.git.getCommit({
+              const commit = (await github.rest.git.getCommit({
                 commit_sha: sha,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-              }).data;
+              })).data;
               
               console.log(sha)
               
