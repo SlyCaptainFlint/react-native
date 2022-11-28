@@ -1,7 +1,6 @@
 name: Close PR, leave comment
 on: 
-  pull_request:
-    types: [closed]
+  push
   
 jobs:
   comment-and-label:
@@ -11,22 +10,4 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const pulls = await github.rest.pulls.get({
-              pull_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-            })
-            
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `This pull request was successfully merged by ${pulls.data.user.login} in **${pulls.data.merge_commit_sha}**.\n\n<sup>[When will my fix make it into a release?](https://github.com/facebook/react-native/wiki/Release-FAQ#when-will-my-fix-make-it-into-a-release) | [Upcoming Releases](https://github.com/reactwg/react-native-releases/discussions/categories/releases)</sup>"
-            `})
-            
-            github.rest.issues.addLabels({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              labels: ["Merged"]
-            })
+            console.log(context);
