@@ -25,7 +25,7 @@ jobs:
               console.log(commit);
                 if(!commit || !commit.message) return;
               
-                const prClosingRegex = /Closes https:\/\/github.com\/facebook\/react-native\/pull\/([0-9]+)|Pull Request resolved: https:\/\/github.com\/facebook\/react-native\/pull\/([0-9]+)/;
+                const prClosingRegex = /Closes https:\/\/github.com\/SlyCaptainFlint\/react-native\/pull\/([0-9]+)|Pull Request resolved: https:\/\/github.com\/SlyCaptainFlint\/react-native\/pull\/([0-9]+)/;
                 
                 const prClosingMatch = commit.message.match(prClosingRegex);
                 
