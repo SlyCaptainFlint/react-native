@@ -43,6 +43,10 @@ jobs:
                 })
                 
                 // If the PR has already been processed (labeled as Merged), skip it
+                console.log(pr);
+                console.log(pr.labels);
+                console.log(pr.labels.some(label => label.name === "Merged"));
+              
                 if(pr.labels && pr.labels.some(label => label.name === "Merged")) return;
 
                 github.rest.issues.createComment({
