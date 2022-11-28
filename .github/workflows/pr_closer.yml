@@ -59,7 +59,7 @@ jobs:
                 `})
 
                 github.rest.issues.addLabels({
-                  issue_number: prNumber,
+                  issue_number: closedPrNumber,
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   labels: ["Merged"]
