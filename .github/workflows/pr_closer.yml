@@ -10,13 +10,16 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const sha = context.commits[0].id;
-            
-            const commit = await github.rest.git.getCommit({
-              commit_sha: sha,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-            });
-            
-            console.log(`sha: ${sha}`);
-            console.log(`full commit: ${commit}`);
+            if(context.commits && context.commits.length){
+              const sha = context.commits[0].id;
+
+              const commit = await github.rest.git.getCommit({
+                commit_sha: sha,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+              });
+
+              console.log(`sha: ${sha}`);
+              console.log(`full commit: ${commit}`);
+            }
+
