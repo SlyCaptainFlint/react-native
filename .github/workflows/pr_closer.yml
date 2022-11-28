@@ -36,11 +36,11 @@ jobs:
               if(closedPrNumber){
                 const commitAuthor = commit.author.name;
                 
-                const pr = await github.rest.pulls.get({
+                const pr = (await github.rest.pulls.get({
                   pull_number: closedPrNumber,
                   owner: context.repo.owner,
                   repo: context.repo.repo,
-                })
+                })).data;
                 
                 // If the PR has already been processed (labeled as Merged), skip it
                 console.log(pr);
