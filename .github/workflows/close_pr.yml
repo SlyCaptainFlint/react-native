@@ -2,6 +2,9 @@ name: Label closed PR as merged and leave a comment
 on: 
   push
 
+permissions:
+  contents: read
+  pull-requests: write
   
 jobs:
   comment-and-label:
@@ -13,22 +16,13 @@ jobs:
           script: |
             if(!context.payload.commits || !context.payload.commits.length) return;
             const sha = context.payload.commits[0].id;
-            console.log(context.payload.commits);
-            console.log("/n");
             
-            const commit = (await github.rest.repos.getCommit({
+            const {commit, author} = (await github.rest.repos.getCommit({
               ref: sha,
               owner: context.repo.owner,
               repo: context.repo.repo,
             })).data;
         
-            
-            console.log((await github.rest.repos.getCommit({
-              ref: sha,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-            })));
-            
             // Looking at the commit message, checks which PR number, if any, was closed by this commit
             const getClosedPrIfExists = (commit) => {
               if(!commit || !commit.message) return;
@@ -51,11 +45,13 @@ jobs:
             const mergedLabel = "Merged";
             if(pr.labels && pr.labels.some(label => label.name === mergedLabel)) return;
             
+            const authorName = author?.login ? `@${author.login}` : commit.author.name;
+            
             github.rest.issues.createComment({
               issue_number: closedPrNumber,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `This pull request was successfully merged by ${commit.author.name} in **${sha}**.\n\n<sup>[When will my fix make it into a release?](https://github.com/facebook/react-native/wiki/Release-FAQ#when-will-my-fix-make-it-into-a-release) | [Upcoming Releases](https://github.com/reactwg/react-native-releases/discussions/categories/releases)</sup>`
+              body: `This pull request was successfully merged by ${authorName} in **${sha}**.\n\n<sup>[When will my fix make it into a release?](https://github.com/facebook/react-native/wiki/Release-FAQ#when-will-my-fix-make-it-into-a-release) | [Upcoming Releases](https://github.com/reactwg/react-native-releases/discussions/categories/releases)</sup>`
             });
             
             github.rest.issues.addLabels({
