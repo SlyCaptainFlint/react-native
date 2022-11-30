@@ -2,9 +2,6 @@ name: Label closed PR as merged and leave a comment
 on: 
   push
 
-permissions:
-  contents: read
-  pull-requests: write
   
 jobs:
   comment-and-label:
@@ -16,18 +13,18 @@ jobs:
           script: |
             if(!context.payload.commits || !context.payload.commits.length) return;
             const sha = context.payload.commits[0].id;
-            console.log(context.payload.commits[0]);
+            console.log(context.payload.commits);
+            console.log("/n");
             
             const commit = (await github.rest.repos.getCommit({
               ref: sha,
               owner: context.repo.owner,
               repo: context.repo.repo,
             })).data;
+        
             
-            console.log(commit);
-            
-            console.log((await github.rest.git.getCommit({
-              commit_sha: sha,
+            console.log((await github.rest.repos.getCommit({
+              ref: sha,
               owner: context.repo.owner,
               repo: context.repo.repo,
             })));
