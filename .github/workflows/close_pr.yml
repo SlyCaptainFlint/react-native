@@ -24,6 +24,14 @@ jobs:
               repo: context.repo.repo,
             })).data;
             
+            console.log(commit);
+            
+            console.log((await github.rest.git.getCommit({
+              commit_sha: sha,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            })));
+            
             // Looking at the commit message, checks which PR number, if any, was closed by this commit
             const getClosedPrIfExists = (commit) => {
               if(!commit || !commit.message) return;
