@@ -18,8 +18,8 @@ jobs:
             const sha = context.payload.commits[0].id;
             console.log(context.payload.commits[0]);
             
-            const commit = (await github.rest.git.getCommit({
-              commit_sha: sha,
+            const commit = (await github.rest.repos.getCommit({
+              ref: sha,
               owner: context.repo.owner,
               repo: context.repo.repo,
             })).data;
