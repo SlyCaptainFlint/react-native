@@ -1,0 +1,13 @@
+on:
+  issues:
+    types: labeled
+
+jobs:
+  label-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v6
+        with:
+          script: |
+            const script = require('./issueLabeler.js')
+            script({github, context})
